@@ -12,51 +12,48 @@ import com.project.repo.ProductRepo;
 
 @Service
 public class ProductService {
-	
+
 	@Autowired
 	private ProductRepo repo;
-	
-	public List<Product> getAllProducts(){
-		
+
+	public List<Product> getAllProducts() {
+
 		return repo.findAll();
 	}
 
 	public Product getProduct(int id) {
 		return repo.findById(id).orElse(null);
-		
 	}
 
-	public Product addProduct(Product prod, MultipartFile imagefile) throws IOException {
-		prod.setImageName(imagefile.getOriginalFilename());
-		prod.setImageType(imagefile.getContentType());
-		prod.setImageData(imagefile.getBytes());
-	    return repo.save(prod);
-	  
+	public Product addProduct(Product prod, MultipartFile imageFile) throws IOException {
+		prod.setImageName(imageFile.getOriginalFilename());
+		prod.setImageType(imageFile.getContentType());
+		prod.setImageData(imageFile.getBytes());
+		return repo.save(prod);
+
 	}
 
 	public Product getProductById(int productId) {
-		
+
 		return repo.getById(productId);
 	}
-	
-	public Product updateProduct(int id, Product prod, MultipartFile imagefile) throws IOException {
-		prod.setImageName(imagefile.getOriginalFilename());
-		prod.setImageType(imagefile.getContentType());
-		prod.setImageData(imagefile.getBytes());
-	    return repo.save(prod);
-	  
+
+	public Product updateProduct(int id, Product prod, MultipartFile imageFile) throws IOException {
+		prod.setImageName(imageFile.getOriginalFilename());
+		prod.setImageType(imageFile.getContentType());
+		prod.setImageData(imageFile.getBytes());
+		return repo.save(prod);
+
 	}
 
 	public boolean deleteProduct(int id) {
 
-	    if (repo.existsById(id)) {
-	        repo.deleteById(id);
-	        return true;
-	    }
+		if (repo.existsById(id)) {
+			repo.deleteById(id);
+			return true;
+		}
 
-	    return false;
+		return false;
 	}
-	
-	
 
 }

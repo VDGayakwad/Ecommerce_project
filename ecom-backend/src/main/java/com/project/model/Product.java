@@ -21,26 +21,26 @@ import lombok.NoArgsConstructor;
 @AllArgsConstructor
 public class Product {
 
-    @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Integer id;
+	@Id
+	@GeneratedValue(strategy = GenerationType.IDENTITY)
+	private Integer id;
 
-    private String name;
-    private String description;
-    private BigDecimal price;
-    private String category;
+	private String name;
+	private String description;
+	private BigDecimal price;
+	private String category;
 
-    @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "dd-MM-yyyy")
-    private Date releaseDate;
+	@JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "dd-MM-yyyy")
+	private Date releaseDate;
 
-    private boolean availability;
-    private int quantity;
+	private boolean availability;
+	private int quantity;
 
-    private String ImageType;
-    private String ImageName;
+	private String ImageType;
+	private String ImageName;
 
-    @Lob
-    private byte[] ImageData;
+	@Lob
+	private byte[] ImageData;
 
 	public Integer getId() {
 		return id;
