@@ -133,7 +133,7 @@ const Home = ({ selectedCategory }) => {
                 }}
                 key={id}
               >
-                {/* Product details */}
+                {/* Product detailss */}
                 <Link
                   to={`/product/${id}`}
                   style={{
