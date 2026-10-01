@@ -33,6 +33,7 @@ public class ProductService {
 
 	}
 
+	@SuppressWarnings("deprecation")
 	public Product getProductById(int productId) {
 
 		return repo.getById(productId);
