@@ -14,6 +14,7 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.PutMapping;
 
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RequestPart;
 import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.multipart.MultipartFile;
@@ -38,6 +39,7 @@ public class ProductController {
     public ResponseEntity<Product> getProd(@PathVariable int id) {
         Product product = service.getProduct(id);
         if (product != null) {
+
             return new ResponseEntity<Product>(product, HttpStatus.OK);
         } else
             return new ResponseEntity<Product>(HttpStatus.NOT_FOUND);
@@ -126,6 +128,13 @@ public class ProductController {
                     "Error deleting product",
                     HttpStatus.INTERNAL_SERVER_ERROR);
         }
+    }
+
+    @GetMapping("products/search")
+    public ResponseEntity<List<Product>> searchProducts(@RequestParam String keyword) {
+        List<Product> products = service.searchProducts(keyword);
+        System.out.println("searching with " + keyword);
+        return new ResponseEntity<>(products, HttpStatus.OK);
     }
 
 }

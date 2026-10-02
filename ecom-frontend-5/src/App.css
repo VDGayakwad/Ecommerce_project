@@ -2,7 +2,7 @@
 /* Navbar Styles */
 
 .light-theme{
-  --root_background: #1f1f1f;
+  --root_background: white;
   --body_background: white;
   --navbar_background: white;
   --navbar_text : black;
@@ -46,10 +46,10 @@
 
 #root {
   max-width: 100%;
-  max-height: 100%;
+  min-height: 100vh;
   margin: 0 auto;
   background-color: var(--root_background) !important;
-}  
+}
 
 /* <.............................................NAVBAR DROPDOWN......................................> */
 .navbar-brand {
@@ -1178,4 +1178,7 @@ font-size: 14px;
   width: 100%;
   height: 1px;
   background: var(--hr_line_card)
+}
+.liked-heart {
+  color: red !important;
 }
