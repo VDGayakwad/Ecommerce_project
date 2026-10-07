@@ -64,11 +64,12 @@ public class ProductController {
     public ResponseEntity<byte[]> getImageById(@PathVariable int productId) {
 
         Product product = service.getProductById(productId);
-        byte[] imagefile = product.getImageData();
 
         if (product == null || product.getImageData() == null) {
             return ResponseEntity.notFound().build();
         }
+
+        byte[] imagefile = product.getImageData();
 
         return ResponseEntity
                 .ok()
