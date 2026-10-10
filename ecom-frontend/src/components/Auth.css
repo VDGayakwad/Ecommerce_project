@@ -1,0 +1,113 @@
+.auth-page {
+  min-height: 100vh;
+  padding: 112px 20px 48px;
+  display: grid;
+  place-items: center;
+  background:
+    radial-gradient(ellipse at 12% 85%, rgba(21, 111, 101, 0.12), transparent 38%),
+    linear-gradient(135deg, var(--body_background), #e9f1ee 65%, #f7f6f0);
+}
+
+.dark-theme .auth-page {
+  background:
+    radial-gradient(ellipse at 12% 85%, rgba(38, 151, 127, 0.16), transparent 38%),
+    linear-gradient(135deg, #1f1f1f, #292f2d 65%, #252725);
+}
+
+.auth-panel {
+  width: min(100%, 440px);
+  padding: 36px;
+  border: 1px solid rgba(20, 54, 49, 0.16);
+  border-radius: 8px;
+  background: var(--card-bg-clr, #fff);
+  color: var(--para-clr, #171b19);
+  box-shadow: 0 20px 55px rgba(16, 44, 39, 0.12);
+}
+
+.auth-eyebrow {
+  margin: 0 0 10px;
+  color: #157365;
+  font-size: 0.76rem;
+  font-weight: 700;
+  text-transform: uppercase;
+}
+
+.auth-panel h1 {
+  margin: 0;
+  color: var(--para-clr, #171b19);
+  font-size: 2rem;
+}
+
+.auth-intro {
+  margin: 8px 0 26px;
+  color: var(--para-clr, #454b48);
+}
+
+.auth-field {
+  display: grid;
+  gap: 7px;
+  margin-bottom: 18px;
+  color: var(--para-clr, #171b19);
+  font-size: 0.9rem;
+  font-weight: 600;
+}
+
+.auth-field input {
+  width: 100%;
+  min-height: 44px;
+  padding: 9px 11px;
+  border: 1px solid #aebbb6;
+  border-radius: 4px;
+  background: var(--body_background, #fff);
+  color: var(--para-clr, #171b19);
+}
+
+.auth-field input:focus {
+  border-color: #157365;
+  outline: 2px solid rgba(21, 115, 101, 0.2);
+}
+
+.auth-submit {
+  width: 100%;
+  min-height: 46px;
+  border: 0;
+  border-radius: 4px;
+  background: #157365;
+  color: #fff !important;
+  font-weight: 700;
+}
+
+.auth-submit:disabled {
+  cursor: wait;
+  opacity: 0.7;
+}
+
+.auth-message {
+  margin: 0 0 16px;
+  font-size: 0.9rem;
+}
+
+.auth-message.is-error {
+  color: #a52a2a;
+}
+
+.auth-message.is-success {
+  color: #157365;
+}
+
+.auth-switch {
+  margin: 20px 0 0;
+  color: var(--para-clr, #454b48);
+  text-align: center;
+}
+
+.auth-switch a {
+  color: #157365;
+  font-weight: 700;
+}
+
+@media (max-width: 480px) {
+  .auth-panel {
+    padding: 28px 22px;
+  }
+}

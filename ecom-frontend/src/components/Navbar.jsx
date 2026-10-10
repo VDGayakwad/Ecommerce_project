@@ -1,6 +1,7 @@
 import React, { useEffect, useState } from "react";
 import Home from "./Home"
 import axios from "axios";
+import { Link } from "react-router-dom";
 // import { json } from "react-router-dom";
 // import { BiSunFill, BiMoon } from "react-icons/bi";
 
@@ -163,6 +164,12 @@ const Navbar = ({ onSelectCategory, onSearch }) => {
                 </li>
 
                 <li className="nav-item"></li>
+                <li className="nav-item">
+                  <Link className="nav-link" to="/login">Sign in</Link>
+                </li>
+                <li className="nav-item">
+                  <Link className="nav-link" to="/register">Register</Link>
+                </li>
               </ul>
               <button className="theme-btn" onClick={() => toggleTheme()}>
                 {theme === "dark-theme" ? (
