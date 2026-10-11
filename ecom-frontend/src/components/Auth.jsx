@@ -29,11 +29,19 @@ const Auth = ({ mode }) => {
       const response = await API.post(endpoint, payload);
 
       setIsError(false);
-      if (isRegister) {
-        navigate("/login", { state: { notice: response.data } });
+     if (isRegister) {
+      navigate("/login", { state: { notice: response.data } });
+    } else {
+      const token = response.data.token;
+
+      if (token) {
+        localStorage.setItem("token", token);
+        navigate("/", { replace: true });
       } else {
-        setMessage(response.data);
+        setIsError(true);
+        setMessage("Login successful, but token was not received.");
       }
+    }
     } catch (error) {
       const responseMessage = error.response?.data;
       setIsError(true);

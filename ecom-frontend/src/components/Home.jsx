@@ -2,12 +2,15 @@
 import React, { useContext, useEffect, useState } from "react";
 import { Link } from "react-router-dom";
 import axios from "axios";
+import API from "../axios";
 import AppContext from "../Context/Context";
 import unplugged from "../assets/unplugged.png";
 
 const Home = ({ selectedCategory }) => {
   const { data, isError, addToCart } = useContext(AppContext);
+
   const [products, setProducts] = useState([]);
+  const [testMessage, setTestMessage] = useState("");
 
   // Fetch images for all products
   useEffect(() => {
@@ -53,6 +56,29 @@ const Home = ({ selectedCategory }) => {
     }
   }, [data]);
 
+  // Test the protected API using the saved JWT token
+  const testProtectedApi = async () => {
+    try {
+      setTestMessage("Testing protected API...");
+
+      const response = await API.get("/test/hello");
+
+      setTestMessage(
+        typeof response.data === "string"
+          ? response.data
+          : JSON.stringify(response.data)
+      );
+    } catch (error) {
+      console.error("Protected API error:", error);
+
+      setTestMessage(
+        `Request failed: ${
+          error.response?.status ?? "Network error"
+        }`
+      );
+    }
+  };
+
   // Filter products by category
   const filteredProducts = selectedCategory
     ? products.filter(
@@ -81,10 +107,33 @@ const Home = ({ selectedCategory }) => {
 
   return (
     <>
+      {/* Temporary JWT test section */}
+      <div
+        style={{
+          textAlign: "center",
+          marginTop: "70px",
+          padding: "15px",
+        }}
+      >
+        <button
+          type="button"
+          onClick={testProtectedApi}
+        >
+          Test Protected API
+        </button>
+
+        {testMessage && (
+          <p role="status" style={{ marginTop: "10px" }}>
+            {testMessage}
+          </p>
+        )}
+      </div>
+
+      {/* Products grid */}
       <div
         className="grid"
         style={{
-          marginTop: "64px",
+          marginTop: "20px",
           display: "grid",
           gridTemplateColumns:
             "repeat(auto-fit, minmax(250px, 1fr))",
@@ -121,8 +170,7 @@ const Home = ({ selectedCategory }) => {
                 style={{
                   width: "250px",
                   height: "360px",
-                  boxShadow:
-                    "0 4px 8px rgba(0,0,0,0.1)",
+                  boxShadow: "0 4px 8px rgba(0,0,0,0.1)",
                   borderRadius: "10px",
                   overflow: "hidden",
                   backgroundColor: availability
@@ -133,7 +181,7 @@ const Home = ({ selectedCategory }) => {
                 }}
                 key={id}
               >
-                {/* Product detailss */}
+                {/* Product details */}
                 <Link
                   to={`/product/${id}`}
                   style={{
@@ -156,9 +204,7 @@ const Home = ({ selectedCategory }) => {
 
                   <div
                     className="card-body"
-                    style={{
-                      padding: "10px",
-                    }}
+                    style={{ padding: "10px" }}
                   >
                     <h5
                       className="card-title"
@@ -167,9 +213,7 @@ const Home = ({ selectedCategory }) => {
                         fontSize: "1.2rem",
                       }}
                     >
-                      {name
-                        ? name.toUpperCase()
-                        : ""}
+                      {name ? name.toUpperCase() : ""}
                     </h5>
 
                     <p
@@ -184,9 +228,7 @@ const Home = ({ selectedCategory }) => {
 
                     <hr
                       className="hr-line"
-                      style={{
-                        margin: "10px 0",
-                      }}
+                      style={{ margin: "10px 0" }}
                     />
 
                     <h5
@@ -224,9 +266,7 @@ const Home = ({ selectedCategory }) => {
                   }}
                   disabled={!availability}
                 >
-                  {availability
-                    ? "Add to Cart"
-                    : "Out of Stock"}
+                  {availability ? "Add to Cart" : "Out of Stock"}
                 </button>
               </div>
             );
