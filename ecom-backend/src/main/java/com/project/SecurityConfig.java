@@ -44,6 +44,7 @@ public class SecurityConfig {
                 .authorizeHttpRequests(auth -> auth
                         // Allow browser CORS preflight requests
                         .requestMatchers(HttpMethod.OPTIONS, "/**").permitAll()
+                        .requestMatchers("/oauth2/**", "/login/oauth2/**").permitAll()
 
                         // Login, registration and product browsing are public
                         .requestMatchers(
@@ -53,7 +54,9 @@ public class SecurityConfig {
 
                         // All other endpoints require authentication
                         .anyRequest().authenticated())
-
+                .oauth2Login(oauth2 ->
+                oauth2.defaultSuccessUrl("http://localhost:5173", true)
+                )
                 .addFilterBefore(
                         jwtAuthenticationFilter,
                         UsernamePasswordAuthenticationFilter.class);
