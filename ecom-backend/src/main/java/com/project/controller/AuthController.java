@@ -1,8 +1,8 @@
 
 package com.project.controller;
 
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+// import org.slf4j.Logger;
+// import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -27,7 +27,8 @@ public class AuthController {
     @Autowired
     private JWTService jwtService;
 
-    private static final Logger logger = LoggerFactory.getLogger(AuthController.class);
+    // private static final Logger logger =
+    // LoggerFactory.getLogger(AuthController.class);
 
     @PostMapping("/register")
     public ResponseEntity<?> registerUser(@RequestBody User user) {

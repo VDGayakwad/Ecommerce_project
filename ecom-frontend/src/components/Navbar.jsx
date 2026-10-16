@@ -86,7 +86,9 @@ const Navbar = ({ onSelectCategory, onSearch }) => {
 
   // Logout: clear the JWT from the browser
   const handleLogout = () => {
+    
     localStorage.removeItem("token");
+    window.dispatchEvent(new Event("authChanged"));
     setIsLoggedIn(false);
     navigate("/login", { replace: true });
   };

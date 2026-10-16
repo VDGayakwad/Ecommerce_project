@@ -36,6 +36,7 @@ const Auth = ({ mode }) => {
 
       if (token) {
         localStorage.setItem("token", token);
+        window.dispatchEvent(new Event("authChanged"));
         navigate("/", { replace: true });
       } else {
         setIsError(true);

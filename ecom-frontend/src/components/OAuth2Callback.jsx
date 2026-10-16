@@ -11,6 +11,7 @@ const OAuth2Callback = () => {
 
     if (token) {
       localStorage.setItem("token", token);
+      window.dispatchEvent(new Event("authChanged"));
       navigate("api/products", { replace: true });
     } else {
       navigate("/login", {
