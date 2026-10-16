@@ -1,6 +1,14 @@
 # Java / Spring Boot
-backend/target/
-*.class
+ecom-backend/target/
+ecom-backend/*.class
+ecom-backend/.classpath
+ecom-backend/.factorypath
+ecom-backend/.project
+ecom-backend/.settings/
+ecom-backend/HELP.md
+
+# Spring Boot configuration
+ecom-backend/src/main/resources/application.properties
 
 # IDE
 .idea/
@@ -8,9 +16,9 @@ backend/target/
 .vscode/
 
 # React
-frontend/node_modules/
-frontend/dist/
-frontend/build/
+ecom-frontend/node_modules/
+ecom-frontend/dist/
+ecom-frontend/build/
 
 # Environment files
 .env

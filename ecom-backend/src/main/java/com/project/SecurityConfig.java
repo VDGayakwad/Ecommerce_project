@@ -19,73 +19,70 @@ import org.springframework.web.cors.CorsConfigurationSource;
 import org.springframework.web.cors.UrlBasedCorsConfigurationSource;
 
 import com.project.security.JwtAuthenticationFilter;
+import com.project.security.OAuth2LoginSuccessHandler;
 
 @Configuration
 public class SecurityConfig {
 
-    @Bean
-    SecurityFilterChain securityFilterChain(
-            HttpSecurity http,
-            JwtAuthenticationFilter jwtAuthenticationFilter)
-            throws Exception {
+        @Bean
+        SecurityFilterChain securityFilterChain(HttpSecurity http, JwtAuthenticationFilter jwtAuthenticationFilter,
+                        OAuth2LoginSuccessHandler oauth2LoginSuccessHandler)
+                        throws Exception {
+                http
+                                .cors(Customizer.withDefaults())
 
-        http
-                .cors(Customizer.withDefaults())
+                                .csrf(csrf -> csrf.disable())
 
-                .csrf(csrf -> csrf.disable())
+                                .sessionManagement(session -> session
+                                                .sessionCreationPolicy(SessionCreationPolicy.STATELESS))
 
-                .sessionManagement(session -> session
-                        .sessionCreationPolicy(SessionCreationPolicy.STATELESS))
+                                .exceptionHandling(exception -> exception
+                                                .authenticationEntryPoint(
+                                                                new HttpStatusEntryPoint(HttpStatus.UNAUTHORIZED)))
 
-                .exceptionHandling(exception -> exception
-                        .authenticationEntryPoint(
-                                new HttpStatusEntryPoint(HttpStatus.UNAUTHORIZED)))
+                                .authorizeHttpRequests(auth -> auth
+                                                // Allow browser CORS preflight requests
+                                                .requestMatchers(HttpMethod.OPTIONS, "/**").permitAll()
+                                                .requestMatchers("/oauth2/**", "/login/oauth2/**").permitAll()
 
-                .authorizeHttpRequests(auth -> auth
-                        // Allow browser CORS preflight requests
-                        .requestMatchers(HttpMethod.OPTIONS, "/**").permitAll()
-                        .requestMatchers("/oauth2/**", "/login/oauth2/**").permitAll()
+                                                // Login, registration and product browsing are public
+                                                .requestMatchers(
+                                                                "/api/auth/**",
+                                                                "/api/products/**")
+                                                .permitAll()
 
-                        // Login, registration and product browsing are public
-                        .requestMatchers(
-                                "/api/auth/**",
-                                "/api/products/**")
-                        .permitAll()
+                                                // All other endpoints require authentication
+                                                .anyRequest().authenticated())
+                                .oauth2Login(oauth2 -> oauth2.successHandler(oauth2LoginSuccessHandler))
+                                .addFilterBefore(
+                                                jwtAuthenticationFilter,
+                                                UsernamePasswordAuthenticationFilter.class);
 
-                        // All other endpoints require authentication
-                        .anyRequest().authenticated())
-                .oauth2Login(oauth2 ->
-                oauth2.defaultSuccessUrl("http://localhost:5173", true)
-                )
-                .addFilterBefore(
-                        jwtAuthenticationFilter,
-                        UsernamePasswordAuthenticationFilter.class);
+                return http.build();
+        }
 
-        return http.build();
-    }
+        @Bean
+        CorsConfigurationSource corsConfigurationSource() {
+                CorsConfiguration configuration = new CorsConfiguration();
 
-    @Bean
-    CorsConfigurationSource corsConfigurationSource() {
-        CorsConfiguration configuration = new CorsConfiguration();
+                configuration.setAllowedOrigins(
+                                List.of("http://localhost:5173"));
 
-        configuration.setAllowedOrigins(
-                List.of("http://localhost:5173"));
+                configuration.setAllowedMethods(
+                                List.of("GET", "POST", "PUT", "DELETE", "PATCH", "OPTIONS"));
 
-        configuration.setAllowedMethods(
-                List.of("GET", "POST", "PUT", "DELETE", "PATCH", "OPTIONS"));
+                configuration.setAllowedHeaders(
+                                List.of("Authorization", "Content-Type", "Accept", "Origin"));
 
-        configuration.setAllowedHeaders(
-                List.of("Authorization", "Content-Type", "Accept", "Origin"));
+                UrlBasedCorsConfigurationSource source = new UrlBasedCorsConfigurationSource();
 
-        UrlBasedCorsConfigurationSource source = new UrlBasedCorsConfigurationSource();
+                source.registerCorsConfiguration("/**", configuration);
 
-        source.registerCorsConfiguration("/**", configuration);
+                return source;
+        }
 
-        return source;
-    }
-
-    @Bean
-    public PasswordEncoder passwordEncoder() {
-        return new BCryptPasswordEncoder();
-    }
+        @Bean
+        public PasswordEncoder passwordEncoder() {
+                return new BCryptPasswordEncoder();
+        }
 }

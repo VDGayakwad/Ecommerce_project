@@ -117,6 +117,25 @@ const Auth = ({ mode }) => {
           </button>
         </form>
 
+                {!isRegister && (
+          <>
+            <div className="auth-divider">
+              <span>OR</span>
+            </div>
+
+            <button
+              type="button"
+              className="google-login-btn"
+              onClick={() => {
+                window.location.href =
+                  "http://localhost:8080/oauth2/authorization/google";
+              }}
+            >
+              Continue with Google
+            </button>
+          </>
+        )}
+
         <p className="auth-switch">
           {isRegister ? "Already registered? " : "New to EasyCart? "}
           <Link to={isRegister ? "/login" : "/register"}>

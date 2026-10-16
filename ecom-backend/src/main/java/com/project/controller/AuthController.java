@@ -1,8 +1,8 @@
 
 package com.project.controller;
 
-
-
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -27,6 +27,8 @@ public class AuthController {
     @Autowired
     private JWTService jwtService;
 
+    private static final Logger logger = LoggerFactory.getLogger(AuthController.class);
+
     @PostMapping("/register")
     public ResponseEntity<?> registerUser(@RequestBody User user) {
         try {
@@ -49,26 +51,23 @@ public class AuthController {
         }
     }
 
-    
-   
-        @PostMapping("/login")
-        public ResponseEntity<?> loginUser(@RequestBody User user) {
+    @PostMapping("/login")
+    public ResponseEntity<?> loginUser(@RequestBody User user) {
 
-            String result = userService.loginUser(
+        String result = userService.loginUser(
                 user.getEmail(),
-                user.getPassword()
-            );
+                user.getPassword());
 
-            if ("Login successful".equals(result)) {
-                String token = jwtService.generateToken(user.getEmail());
+        if ("Login successful".equals(result)) {
+            logger.info("Login successful");
+            String token = jwtService.generateToken(user.getEmail());
 
-                return ResponseEntity.ok(
-                    java.util.Map.of("token", token)
-                );
-            }
-
-            return ResponseEntity.status(HttpStatus.UNAUTHORIZED)
-                .body(result);
+            return ResponseEntity.ok(
+                    java.util.Map.of("token", token));
         }
+        logger.warn("Login failed: invalid credentials");
+        return ResponseEntity.status(HttpStatus.UNAUTHORIZED)
+                .body(result);
+    }
 
 }

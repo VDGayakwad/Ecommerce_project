@@ -12,6 +12,7 @@ import Auth from "./components/Auth";
 import "bootstrap/dist/css/bootstrap.min.css";
 import "bootstrap/dist/js/bootstrap.bundle.min.js";
 import 'bootstrap/dist/css/bootstrap.min.css';
+import OAuth2Callback from "./components/OAuth2Callback";
 
 
 function App() {
@@ -56,6 +57,7 @@ function App() {
           <Route path="/cart" element={<Cart />} />
           <Route path="/product/update/:id" element={<UpdateProduct />} />
           <Route path="/login" element={<Auth mode="login" />} />
+          <Route path="/oauth2/callback" element={<OAuth2Callback />} />
           <Route path="/register" element={<Auth mode="register" />} />
         </Routes>
       </BrowserRouter>
