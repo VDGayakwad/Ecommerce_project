@@ -7,6 +7,12 @@ ecom-backend/.project
 ecom-backend/.settings/
 ecom-backend/HELP.md
 
+
+# Application logs
+ecom-backend/logs/
+*.log
+
+
 # Spring Boot configuration
 ecom-backend/src/main/resources/application.properties
 

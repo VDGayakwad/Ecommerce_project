@@ -1,31 +1,44 @@
 import React, { useEffect, useState } from "react";
-import Home from "./Home"
 import axios from "axios";
-import { Link } from "react-router-dom";
-// import { json } from "react-router-dom";
-// import { BiSunFill, BiMoon } from "react-icons/bi";
+import { Link, useLocation, useNavigate } from "react-router-dom";
 
 const Navbar = ({ onSelectCategory, onSearch }) => {
+  const location = useLocation();
+  const navigate = useNavigate();
+
   const getInitialTheme = () => {
     const storedTheme = localStorage.getItem("theme");
     return storedTheme ? storedTheme : "light-theme";
   };
+
   const [selectedCategory, setSelectedCategory] = useState("");
   const [theme, setTheme] = useState(getInitialTheme());
   const [input, setInput] = useState("");
   const [searchResults, setSearchResults] = useState([]);
   const [noResults, setNoResults] = useState(false);
   const [searchFocused, setSearchFocused] = useState(false);
-  const [showSearchResults,setShowSearchResults] = useState(false)
+  const [showSearchResults, setShowSearchResults] = useState(false);
+
+  // Restore login state from the saved JWT
+  const [isLoggedIn, setIsLoggedIn] = useState(
+    () => Boolean(localStorage.getItem("token"))
+  );
+
+  // Update login state after login, Google callback, navigation or logout
+  useEffect(() => {
+    setIsLoggedIn(Boolean(localStorage.getItem("token")));
+  }, [location.pathname]);
+
   useEffect(() => {
     fetchData();
   }, []);
 
-  const fetchData = async (value) => {
+  const fetchData = async () => {
     try {
-      const response = await axios.get("http://localhost:8080/api/products");
+      const response = await axios.get(
+        "http://localhost:8080/api/products"
+      );
       setSearchResults(response.data);
-      console.log(response.data);
     } catch (error) {
       console.error("Error fetching data:", error);
     }
@@ -33,18 +46,20 @@ const Navbar = ({ onSelectCategory, onSearch }) => {
 
   const handleChange = async (value) => {
     setInput(value);
+
     if (value.length >= 1) {
-      setShowSearchResults(true)
-    try {
-      const response = await axios.get(
-        `http://localhost:8080/api/products/search?keyword=${value}`
-      );
-      setSearchResults(response.data);
-      setNoResults(response.data.length === 0);
-      console.log(response.data);
-    } catch (error) {
-      console.error("Error searching:", error);
-    }
+      setShowSearchResults(true);
+
+      try {
+        const response = await axios.get(
+          `http://localhost:8080/api/products/search?keyword=${encodeURIComponent(value)}`
+        );
+
+        setSearchResults(response.data);
+        setNoResults(response.data.length === 0);
+      } catch (error) {
+        console.error("Error searching:", error);
+      }
     } else {
       setShowSearchResults(false);
       setSearchResults([]);
@@ -52,41 +67,15 @@ const Navbar = ({ onSelectCategory, onSearch }) => {
     }
   };
 
-  
-  // const handleChange = async (value) => {
-  //   setInput(value);
-  //   if (value.length >= 1) {
-  //     setShowSearchResults(true);
-  //     try {
-  //       let response;
-  //       if (!isNaN(value)) {
-  //         // Input is a number, search by ID
-  //         response = await axios.get(`http://localhost:8080/api/products/search?id=${value}`);
-  //       } else {
-  //         // Input is not a number, search by keyword
-  //         response = await axios.get(`http://localhost:8080/api/products/search?keyword=${value}`);
-  //       }
-
-  //       const results = response.data;
-  //       setSearchResults(results);
-  //       setNoResults(results.length === 0);
-  //       console.log(results);
-  //     } catch (error) {
-  //       console.error("Error searching:", error.response ? error.response.data : error.message);
-  //     }
-  //   } else {
-  //     setShowSearchResults(false);
-  //     setSearchResults([]);
-  //     setNoResults(false);
-  //   }
-  // };
-
   const handleCategorySelect = (category) => {
     setSelectedCategory(category);
     onSelectCategory(category);
   };
+
   const toggleTheme = () => {
-    const newTheme = theme === "dark-theme" ? "light-theme" : "dark-theme";
+    const newTheme =
+      theme === "dark-theme" ? "light-theme" : "dark-theme";
+
     setTheme(newTheme);
     localStorage.setItem("theme", newTheme);
   };
@@ -94,6 +83,13 @@ const Navbar = ({ onSelectCategory, onSearch }) => {
   useEffect(() => {
     document.body.className = theme;
   }, [theme]);
+
+  // Logout: clear the JWT from the browser
+  const handleLogout = () => {
+    localStorage.removeItem("token");
+    setIsLoggedIn(false);
+    navigate("/login", { replace: true });
+  };
 
   const categories = [
     "Laptop",
@@ -103,14 +99,16 @@ const Navbar = ({ onSelectCategory, onSearch }) => {
     "Toys",
     "Fashion",
   ];
+
   return (
     <>
       <header>
         <nav className="navbar navbar-expand-lg fixed-top">
           <div className="container-fluid">
-            <a className="navbar-brand" href="http://localhost:5173/">
+            <Link className="navbar-brand" to="/">
               EasyCart
-            </a>
+            </Link>
+
             <button
               className="navbar-toggler"
               type="button"
@@ -122,20 +120,22 @@ const Navbar = ({ onSelectCategory, onSearch }) => {
             >
               <span className="navbar-toggler-icon"></span>
             </button>
+
             <div
               className="collapse navbar-collapse"
               id="navbarSupportedContent"
             >
               <ul className="navbar-nav me-auto mb-2 mb-lg-0">
                 <li className="nav-item">
-                  <a className="nav-link active" aria-current="page" href="/">
+                  <Link className="nav-link active" to="/">
                     Home
-                  </a>
+                  </Link>
                 </li>
+
                 <li className="nav-item">
-                  <a className="nav-link" href="/add_product">
+                  <Link className="nav-link" to="/add_product">
                     Add Product
-                  </a>
+                  </Link>
                 </li>
 
                 <li className="nav-item dropdown">
@@ -145,6 +145,7 @@ const Navbar = ({ onSelectCategory, onSearch }) => {
                     role="button"
                     data-bs-toggle="dropdown"
                     aria-expanded="false"
+                    onClick={(event) => event.preventDefault()}
                   >
                     Categories
                   </a>
@@ -163,68 +164,101 @@ const Navbar = ({ onSelectCategory, onSearch }) => {
                   </ul>
                 </li>
 
-                <li className="nav-item"></li>
-                <li className="nav-item">
-                  <Link className="nav-link" to="/login">Sign in</Link>
-                </li>
-                <li className="nav-item">
-                  <Link className="nav-link" to="/register">Register</Link>
-                </li>
+                {!isLoggedIn ? (
+                  <>
+                    <li className="nav-item">
+                      <Link className="nav-link" to="/login">
+                        Sign in
+                      </Link>
+                    </li>
+
+                    <li className="nav-item">
+                      <Link className="nav-link" to="/register">
+                        Register
+                      </Link>
+                    </li>
+                  </>
+                ) : (
+                  <li className="nav-item">
+                    <button
+                      type="button"
+                      className="nav-link btn btn-link"
+                      onClick={handleLogout}
+                    >
+                      Logout
+                    </button>
+                  </li>
+                )}
               </ul>
-              <button className="theme-btn" onClick={() => toggleTheme()}>
+
+              <button
+                className="theme-btn"
+                onClick={toggleTheme}
+                type="button"
+              >
                 {theme === "dark-theme" ? (
                   <i className="bi bi-moon-fill"></i>
                 ) : (
                   <i className="bi bi-sun-fill"></i>
                 )}
               </button>
+
               <div className="d-flex align-items-center cart">
-                <a href="/cart" className="nav-link text-dark">
+                <Link to="/cart" className="nav-link text-dark">
                   <i
                     className="bi bi-cart me-2"
-                    style={{ display: "flex", alignItems: "center" }}
+                    style={{
+                      display: "flex",
+                      alignItems: "center",
+                    }}
                   >
                     Cart
                   </i>
-                </a>
-                {/* <form className="d-flex" role="search" onSubmit={handleSearch} id="searchForm"> */}
-                <input
-                  className="form-control me-2"
-                  type="search"
-                  placeholder="Search"
-                  aria-label="Search"
-                  value={input}
-                  onChange={(e) => handleChange(e.target.value)}
-                  onFocus={() => setSearchFocused(true)} // Set searchFocused to true when search bar is focused
-                  onBlur={() => setSearchFocused(false)} // Set searchFocused to false when search bar loses focus
-                />
-                {showSearchResults && (
-                  <ul className="list-group">
-                    {searchResults.length > 0 ? (  
+                </Link>
+
+                <div className="position-relative">
+                  <input
+                    className="form-control me-2"
+                    type="search"
+                    placeholder="Search"
+                    aria-label="Search"
+                    value={input}
+                    onChange={(event) =>
+                      handleChange(event.target.value)
+                    }
+                    onFocus={() => setSearchFocused(true)}
+                    onBlur={() => setSearchFocused(false)}
+                  />
+
+                  {showSearchResults && (
+                    <ul className="list-group position-absolute w-100">
+                      {searchResults.length > 0 ? (
                         searchResults.map((result) => (
-                          <li key={result.id} className="list-group-item">
-                            <a href={`/product/${result.id}`} className="search-result-link">
-                            <span>{result.name}</span>
-                            </a>
+                          <li
+                            key={result.id}
+                            className="list-group-item"
+                          >
+                            <Link
+                              to={`/product/${result.id}`}
+                              className="search-result-link"
+                              onClick={() =>
+                                setShowSearchResults(false)
+                              }
+                            >
+                              <span>{result.name}</span>
+                            </Link>
                           </li>
                         ))
-                    ) : (
-                      noResults && (
-                        <p className="no-results-message">
-                          No Prouduct with such Name
-                        </p>
-                      )
-                    )}
-                  </ul>
-                )}
-                {/* <button
-                  className="btn btn-outline-success"
-                  onClick={handleSearch}
-                >
-                  Search Products
-                </button> */}
-                {/* </form> */}
-                <div />
+                      ) : (
+                        noResults && (
+                          <li className="list-group-item">
+                            No Product with such Name
+                          </li>
+                        )
+                      )}
+                    </ul>
+                  )}
+                </div>
               </div>
             </div>
           </div>

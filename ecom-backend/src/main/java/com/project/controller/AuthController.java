@@ -59,13 +59,13 @@ public class AuthController {
                 user.getPassword());
 
         if ("Login successful".equals(result)) {
-            logger.info("Login successful");
+            // logger.info("Login successful");
             String token = jwtService.generateToken(user.getEmail());
 
             return ResponseEntity.ok(
                     java.util.Map.of("token", token));
         }
-        logger.warn("Login failed: invalid credentials");
+        // logger.warn("Login failed: invalid credentials");
         return ResponseEntity.status(HttpStatus.UNAUTHORIZED)
                 .body(result);
     }
