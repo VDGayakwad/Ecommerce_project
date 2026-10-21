@@ -13,6 +13,7 @@ import "bootstrap/dist/css/bootstrap.min.css";
 import "bootstrap/dist/js/bootstrap.bundle.min.js";
 import 'bootstrap/dist/css/bootstrap.min.css';
 import OAuth2Callback from "./components/OAuth2Callback";
+import ProtectedRoute from "./components/ProtectedRoute";
 
 
 function App() {
@@ -51,11 +52,26 @@ function App() {
               />
             }
           />
-          <Route path="/add_product" element={<AddProduct />} />
+          
+          <Route
+            path="/add_product"
+            element={
+              <ProtectedRoute allowedRoles={["ADMIN"]}>
+                <AddProduct />
+              </ProtectedRoute>
+            }
+          />
           <Route path="/product" element={<Product  />} />
           <Route path="product/:id" element={<Product  />} />
           <Route path="/cart" element={<Cart />} />
-          <Route path="/product/update/:id" element={<UpdateProduct />} />
+          <Route
+            path="/product/update/:id"
+            element={
+              <ProtectedRoute allowedRoles={["ADMIN"]}>
+                <UpdateProduct />
+              </ProtectedRoute>
+            }
+          />
           <Route path="/login" element={<Auth mode="login" />} />
           <Route path="/oauth2/callback" element={<OAuth2Callback />} />
           <Route path="/register" element={<Auth mode="register" />} />
