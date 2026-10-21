@@ -1,9 +1,7 @@
 
 package com.project.security;
 
-
 import java.util.Date;
-
 import javax.crypto.SecretKey;
 
 import org.springframework.stereotype.Service;
@@ -16,12 +14,14 @@ public class JWTService {
 
     private final SecretKey secretKey = Jwts.SIG.HS256.key().build();
 
-    public String generateToken(String email) {
+    public String generateToken(String email, String role) {
 
         return Jwts.builder()
                 .subject(email)
+                .claim("role", role)
                 .issuedAt(new Date())
-                .expiration(new Date(System.currentTimeMillis() + 1000 * 60 * 15))
+                .expiration(
+                        new Date(System.currentTimeMillis() + 1000 * 60 * 15))
                 .signWith(secretKey)
                 .compact();
     }

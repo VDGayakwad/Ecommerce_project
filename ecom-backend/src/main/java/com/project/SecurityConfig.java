@@ -1,3 +1,4 @@
+
 package com.project;
 
 import java.util.List;
@@ -25,35 +26,79 @@ import com.project.security.OAuth2LoginSuccessHandler;
 public class SecurityConfig {
 
         @Bean
-        SecurityFilterChain securityFilterChain(HttpSecurity http, JwtAuthenticationFilter jwtAuthenticationFilter,
+        SecurityFilterChain securityFilterChain(
+                        HttpSecurity http,
+                        JwtAuthenticationFilter jwtAuthenticationFilter,
                         OAuth2LoginSuccessHandler oauth2LoginSuccessHandler)
                         throws Exception {
+
                 http
                                 .cors(Customizer.withDefaults())
-
                                 .csrf(csrf -> csrf.disable())
-
                                 .sessionManagement(session -> session
                                                 .sessionCreationPolicy(SessionCreationPolicy.STATELESS))
-
                                 .exceptionHandling(exception -> exception
                                                 .authenticationEntryPoint(
                                                                 new HttpStatusEntryPoint(HttpStatus.UNAUTHORIZED)))
 
                                 .authorizeHttpRequests(auth -> auth
-                                                // Allow browser CORS preflight requests
-                                                .requestMatchers(HttpMethod.OPTIONS, "/**").permitAll()
-                                                .requestMatchers("/oauth2/**", "/login/oauth2/**").permitAll()
 
-                                                // Login, registration and product browsing are public
+                                                // Allow CORS preflight requests
+                                                .requestMatchers(HttpMethod.OPTIONS, "/**").permitAll()
+
+                                                // Google OAuth endpoints
                                                 .requestMatchers(
-                                                                "/api/auth/**",
+                                                                "/oauth2/**",
+                                                                "/login/oauth2/**")
+                                                .permitAll()
+
+                                                // Login and registration
+                                                .requestMatchers("/api/auth/**").permitAll()
+
+                                                // only admin can access the testcontroller
+                                                .requestMatchers("/api/test/**")
+                                                .hasRole("ADMIN")
+
+                                                // Only ADMIN can create products
+                                                .requestMatchers(
+                                                                HttpMethod.POST,
+                                                                "/api/products",
+                                                                "/api/products/**")
+                                                .hasRole("ADMIN")
+
+                                                // Only ADMIN can update products
+                                                .requestMatchers(
+                                                                HttpMethod.PUT,
+                                                                "/api/products",
+                                                                "/api/products/**")
+                                                .hasRole("ADMIN")
+
+                                                // Only ADMIN can delete products
+                                                .requestMatchers(
+                                                                HttpMethod.DELETE,
+                                                                "/api/products",
+                                                                "/api/products/**")
+                                                .hasRole("ADMIN")
+
+                                                // Only ADMIN can use PATCH product endpoints
+                                                .requestMatchers(
+                                                                HttpMethod.PATCH,
+                                                                "/api/products",
+                                                                "/api/products/**")
+                                                .hasRole("ADMIN")
+
+                                                // Product browsing, searching and image retrieval are public
+                                                .requestMatchers(
+                                                                HttpMethod.GET,
+                                                                "/api/products",
                                                                 "/api/products/**")
                                                 .permitAll()
 
-                                                // All other endpoints require authentication
+                                                // Cart and all other endpoints require authentication
                                                 .anyRequest().authenticated())
+
                                 .oauth2Login(oauth2 -> oauth2.successHandler(oauth2LoginSuccessHandler))
+
                                 .addFilterBefore(
                                                 jwtAuthenticationFilter,
                                                 UsernamePasswordAuthenticationFilter.class);
@@ -63,6 +108,7 @@ public class SecurityConfig {
 
         @Bean
         CorsConfigurationSource corsConfigurationSource() {
+
                 CorsConfiguration configuration = new CorsConfiguration();
 
                 configuration.setAllowedOrigins(

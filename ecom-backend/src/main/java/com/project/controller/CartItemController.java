@@ -14,7 +14,7 @@ import org.springframework.web.server.ResponseStatusException;
 import java.util.stream.Collectors;
 import com.project.dto.CartItemResponse;
 
-import com.project.model.CartItem;
+
 import com.project.service.CartItemService;
 
 @RestController

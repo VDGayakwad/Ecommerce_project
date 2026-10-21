@@ -1,3 +1,4 @@
+
 package com.project.security;
 
 import java.io.IOException;
@@ -31,9 +32,7 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
         String path = request.getServletPath();
 
         return "OPTIONS".equalsIgnoreCase(request.getMethod())
-                || path.startsWith("/api/auth/")
-                || path.equals("/api/products")
-                || path.startsWith("/api/products/");
+                || path.startsWith("/api/auth/");
     }
 
     @Override
@@ -44,6 +43,14 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
             throws ServletException, IOException {
 
         String authHeader = request.getHeader("Authorization");
+        System.out.println("REQUEST: " + request.getMethod()
+                + " " + request.getServletPath());
+
+        System.out.println("AUTH HEADER PRESENT: "
+                + (authHeader != null));
+
+        System.out.println("BEARER TOKEN PRESENT: "
+                + (authHeader != null && authHeader.startsWith("Bearer ")));
 
         if (authHeader == null || !authHeader.startsWith("Bearer ")) {
             filterChain.doFilter(request, response);
@@ -65,14 +72,26 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
         }
 
         String email = claims.getSubject();
+        String role = claims.get("role", String.class);
 
-        if (email != null
-                && SecurityContextHolder.getContext().getAuthentication() == null) {
+        if (email == null
+                || email.isBlank()
+                || !("USER".equals(role) || "ADMIN".equals(role))) {
+
+            SecurityContextHolder.clearContext();
+            response.setStatus(HttpServletResponse.SC_UNAUTHORIZED);
+            response.setContentType("application/json");
+            response.getWriter().write(
+                    "{\"error\":\"Invalid token claims\"}");
+            return;
+        }
+
+        if (SecurityContextHolder.getContext().getAuthentication() == null) {
 
             var authentication = new UsernamePasswordAuthenticationToken(
                     email,
                     null,
-                    List.of(new SimpleGrantedAuthority("ROLE_USER")));
+                    List.of(new SimpleGrantedAuthority("ROLE_" + role)));
 
             SecurityContextHolder.getContext()
                     .setAuthentication(authentication);

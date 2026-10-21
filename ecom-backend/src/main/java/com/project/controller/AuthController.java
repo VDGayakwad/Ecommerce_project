@@ -60,8 +60,12 @@ public class AuthController {
                 user.getPassword());
 
         if ("Login successful".equals(result)) {
-            // logger.info("Login successful");
-            String token = jwtService.generateToken(user.getEmail());
+
+            User dbUser = userService.getUserByEmail(user.getEmail());
+
+            String token = jwtService.generateToken(
+                    dbUser.getEmail(),
+                    dbUser.getRole());
 
             return ResponseEntity.ok(
                     java.util.Map.of("token", token));
