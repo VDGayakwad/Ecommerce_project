@@ -77,7 +77,6 @@ public class ProductController {
                 .body(imagefile);
     }
 
-    // UPDATE PRODUCT
     @PutMapping("/products/{id}")
     public ResponseEntity<?> updateProduct(
             @PathVariable int id,
@@ -85,24 +84,46 @@ public class ProductController {
             @RequestPart(required = false) MultipartFile imagefile) {
 
         try {
-
             Product updatedProduct = service.updateProduct(id, product, imagefile);
 
             if (updatedProduct != null) {
-                return new ResponseEntity<>(
-                        updatedProduct,
-                        HttpStatus.OK);
+                return new ResponseEntity<>(updatedProduct, HttpStatus.OK);
             }
-
-            return new ResponseEntity<>(
-                    HttpStatus.NOT_FOUND);
+            return new ResponseEntity<>(HttpStatus.NOT_FOUND);
 
         } catch (Exception e) {
-
+            e.printStackTrace(); // full stack trace in console
             return new ResponseEntity<>(
+                    "Error: " + e.getMessage(), // message in Postman/response
                     HttpStatus.INTERNAL_SERVER_ERROR);
         }
     }
+    // UPDATE PRODUCT
+    // @PutMapping("/products/{id}")
+    // public ResponseEntity<?> updateProduct(
+    // @PathVariable int id,
+    // @RequestPart Product product,
+    // @RequestPart(required = false) MultipartFile imagefile) {
+
+    // try {
+
+    // Product updatedProduct = service.updateProduct(id, product, imagefile);
+
+    // if (updatedProduct != null) {
+    // return new ResponseEntity<>(
+    // updatedProduct,
+    // HttpStatus.OK);
+    // }
+
+    // return new ResponseEntity<>(
+    // HttpStatus.NOT_FOUND);
+
+    // } catch (Exception e) {
+
+    // return new ResponseEntity<>(
+    // HttpStatus.INTERNAL_SERVER_ERROR);
+    // }
+    // }
 
     // DELETE PRODUCT
     @DeleteMapping("/products/{id}")

@@ -39,12 +39,39 @@ public class ProductService {
 		return repo.getById(productId);
 	}
 
-	public Product updateProduct(int id, Product prod, MultipartFile imageFile) throws IOException {
-		prod.setImageName(imageFile.getOriginalFilename());
-		prod.setImageType(imageFile.getContentType());
-		prod.setImageData(imageFile.getBytes());
-		return repo.save(prod);
+	// public Product updateProduct(int id, Product prod, MultipartFile imageFile)
+	// throws IOException {
+	// prod.setImageName(imageFile.getOriginalFilename());
+	// prod.setImageType(imageFile.getContentType());
+	// prod.setImageData(imageFile.getBytes());
+	// return repo.save(prod);
 
+	// }
+
+	public Product updateProduct(int id, Product prod, MultipartFile imageFile) throws IOException {
+
+		Product existing = repo.findById(id).orElse(null);
+		if (existing == null) {
+			return null; // controller returns 404
+		}
+
+		// copy the fields that can be updated (adjust to your Product fields)
+		existing.setName(prod.getName());
+		existing.setDescription(prod.getDescription());
+		existing.setPrice(prod.getPrice());
+		existing.setCategory(prod.getCategory());
+		existing.setReleaseDate(prod.getReleaseDate());
+		existing.setAvailability(prod.isAvailability());
+		existing.setQuantity(prod.getQuantity());
+
+		// only replace the image if a new one was uploaded
+		if (imageFile != null && !imageFile.isEmpty()) {
+			existing.setImageName(imageFile.getOriginalFilename());
+			existing.setImageType(imageFile.getContentType());
+			existing.setImageData(imageFile.getBytes());
+		}
+
+		return repo.save(existing);
 	}
 
 	public boolean deleteProduct(int id) {
