@@ -6,7 +6,7 @@ import API from "../axios";
 import AppContext from "../Context/Context";
 import unplugged from "../assets/unplugged.png";
 
-const Home = ({ selectedCategory }) => {
+const Home = ({ selectedCategory, searchQuery = "" }) => {
   const { data, isError, addToCart } = useContext(AppContext);
 
   const [products, setProducts] = useState([]);
@@ -79,12 +79,20 @@ const Home = ({ selectedCategory }) => {
     }
   };
 
-  // Filter products by category
-  const filteredProducts = selectedCategory
-    ? products.filter(
-        (product) => product.category === selectedCategory
-      )
-    : products;
+  // Filter products by category and search query
+  const normalizedSearchQuery = searchQuery.trim().toLowerCase();
+  const filteredProducts = products.filter((product) => {
+    const matchesCategory =
+      !selectedCategory || product.category === selectedCategory;
+    const matchesSearch =
+      !normalizedSearchQuery ||
+      [product.name, product.description, product.category].some(
+        (value) =>
+          value?.toLowerCase().includes(normalizedSearchQuery)
+      );
+
+    return matchesCategory && matchesSearch;
+  });
 
   // Error UI
   if (isError) {
@@ -115,12 +123,12 @@ const Home = ({ selectedCategory }) => {
           padding: "15px",
         }}
       >
-        <button
+        {/* <button
           type="button"
           onClick={testProtectedApi}
         >
           Test Protected API
-        </button>
+        </button> */}
 
         {testMessage && (
           <p role="status" style={{ marginTop: "10px" }}>
@@ -150,7 +158,9 @@ const Home = ({ selectedCategory }) => {
               alignItems: "center",
             }}
           >
-            No Products Available
+            {normalizedSearchQuery || selectedCategory
+              ? "No Products Found"
+              : "No Products Available"}
           </h2>
         ) : (
           filteredProducts.map((product) => {
@@ -216,7 +226,7 @@ const Home = ({ selectedCategory }) => {
                       {name ? name.toUpperCase() : ""}
                     </h5>
 
-                    <p
+                    {/* <p
                       style={{
                         margin: "0 0 5px 0",
                         fontSize: "0.85rem",
@@ -224,7 +234,7 @@ const Home = ({ selectedCategory }) => {
                       }}
                     >
                       {description}
-                    </p>
+                    </p> */}
 
                     <hr
                       className="hr-line"

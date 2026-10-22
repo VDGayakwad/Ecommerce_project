@@ -88,15 +88,11 @@ const Product = () => {
         <div className="right-column" style={{ width: "50%" }}>
           <div className="product-description">
             <div style={{display:'flex',justifyContent:'space-between' }}>
-            <span style={{ fontSize: "1.2rem", fontWeight: 'lighter' }}>
+            <span style={{ fontSize: "1.2rem", fontWeight: 'bold' }}>
               {product.category}
             </span>
-            <p className="release-date" style={{ marginBottom: "2rem" }}>
-              
-              <h6>Listed : <span> <i> {new Date(product.releaseDate).toLocaleDateString()}</i></span></h6>
-              {/* <i> {new Date(product.releaseDate).toLocaleDateString()}</i> */}
-            </p>
-            </div>
+            
+          </div>
             
            
             <h1 style={{ fontSize: "2rem", marginBottom: "0.5rem",textTransform: 'capitalize', letterSpacing:'1px' }}>
@@ -109,7 +105,8 @@ const Product = () => {
 
           <div className="product-price">
             <span style={{ fontSize: "2rem", fontWeight: "bold" }}>
-              {"$" + product.price}
+              <i className="bi bi-currency-rupee"></i>
+              {product.price}
             </span>
             <button
               className={`cart-btn ${

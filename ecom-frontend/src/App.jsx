@@ -19,10 +19,14 @@ import ProtectedRoute from "./components/ProtectedRoute";
 function App() {
   const [cart, setCart] = useState([]);
   const [selectedCategory, setSelectedCategory] = useState("");
+  const [searchQuery, setSearchQuery] = useState("");
 
   const handleCategorySelect = (category) => {
     setSelectedCategory(category);
     console.log("Selected category:", category);
+  };
+  const handleSearch = (query) => {
+    setSearchQuery(query);
   };
   const addToCart = (product) => {
     const existingProduct = cart.find((item) => item.id === product.id);
@@ -42,13 +46,18 @@ function App() {
   return (
     <AppProvider>
       <BrowserRouter>
-        <Navbar onSelectCategory={handleCategorySelect}
-         />
+        <Navbar
+          onSelectCategory={handleCategorySelect}
+          onSearch={handleSearch}
+        />
         <Routes>
           <Route
             path="/"
             element={
-              <Home addToCart={addToCart} selectedCategory={selectedCategory}
+              <Home
+                addToCart={addToCart}
+                selectedCategory={selectedCategory}
+                searchQuery={searchQuery}
               />
             }
           />
